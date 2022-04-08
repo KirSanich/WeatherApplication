@@ -1,4 +1,5 @@
-package com.example.weatherapplication.config;
+package com.example.weatherapplication.configuration;
+
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
