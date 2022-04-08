@@ -12,7 +12,7 @@ public class WeatherApplication {
         SpringApplication.run(WeatherApplication.class, args);
 
         WeatherClient weatherClient = new WeatherClient(new RestTemplate());
-        System.out.println(weatherClient.getWeatherByLatAndLon());
+        System.out.println(weatherClient.getWeatherByLatAndLon(51.672,39.1843));
 
     }
 
