@@ -11,9 +11,6 @@ public class WeatherApplication {
     public static void main(String[] args) {
         SpringApplication.run(WeatherApplication.class, args);
 
-        WeatherClient weatherClient = new WeatherClient(new RestTemplate());
-        System.out.println(weatherClient.getWeatherByLatAndLon(51.672,39.1843));
-
     }
 
 

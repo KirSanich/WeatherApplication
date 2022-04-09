@@ -2,6 +2,7 @@ package com.example.weatherapplication.client;
 
 
 import com.example.weatherapplication.dto.WeatherDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -14,8 +15,8 @@ import java.util.Map;
 import java.util.Objects;
 
 @Service
+@Slf4j
 public class WeatherClient {
-
 
     private final RestTemplate restTemplate;
 
@@ -26,12 +27,12 @@ public class WeatherClient {
         this.restTemplate = restTemplate;
     }
 
-    public String getWeatherByLatAndLon(Double lat, Double lon) {
-        Map<String,String> map = new HashMap<>();
-        map.put("lat",lat.toString());
-        map.put("lon",lon.toString());
-        WeatherDTO responseEntity = restTemplate.getForObject(URL,WeatherDTO.class,map);
-        return Objects.requireNonNull(responseEntity).toString();
+    public  WeatherDTO getWeatherByLatAndLon(Double lat, Double lon) {
+        Map<String, String> map = new HashMap<>();
+        map.put("lat", lat.toString());
+        map.put("lon", lon.toString());
+        log.info("Получение данных по погоде места с координатами ширины {} и долготы {}",lat,lon);
+        return restTemplate.getForObject(URL, WeatherDTO.class, map);
     }
 
 }

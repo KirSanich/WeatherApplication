@@ -16,13 +16,13 @@ public class Main {
     private Double temp;
 
     @JsonProperty("feels_like")
-    private Double feels_like;
+    private Double feelsLike;
 
     @JsonProperty("temp_min")
-    private Double temp_min;
+    private Double tempMin;
 
     @JsonProperty("temp_max")
-    private Double temp_max;
+    private Double tempMax;
 
     @JsonProperty("pressure")
     private Long pressure;
