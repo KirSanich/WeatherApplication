@@ -4,6 +4,7 @@ import com.example.weatherapplication.WeatherApplication;
 import com.example.weatherapplication.dto.WeatherDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -86,10 +87,11 @@ class WeatherClientTest {
                 }
                 """;
 
-        WeatherDTO expected = objectMapper.readValue(json,WeatherDTO.class);
+        WeatherDTO actual = objectMapper.readValue(json,WeatherDTO.class);
         this.server.expect(requestTo( "https://api.openweathermap.org/data/2.5/weather?lat=51.0&lon=39.0&appid=90480cbbb7f631012bd12004fcfbc094")).andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
         WeatherDTO weatherDTO = weatherClient.getWeatherByLatAndLon(51.0,39.0);
-        assertEquals(expected,weatherDTO);
+        assertEquals(weatherDTO,actual);
+        assertThat(actual).usingRecursiveComparison().isEqualTo(weatherDTO);
 
     }
 }
