@@ -4,6 +4,7 @@ package com.example.weatherapplication.client;
 import com.example.weatherapplication.dto.WeatherDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,8 @@ public class WeatherClient {
     private final String URL = "https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid=90480cbbb7f631012bd12004fcfbc094";
 
     @Autowired
-    public WeatherClient(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public WeatherClient(RestTemplateBuilder restTemplateBuilder) {
+        this.restTemplate = restTemplateBuilder.build();
     }
 
     public  WeatherDTO getWeatherByLatAndLon(Double lat, Double lon) {

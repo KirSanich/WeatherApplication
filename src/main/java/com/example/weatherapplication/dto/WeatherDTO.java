@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@EqualsAndHashCode
 public class WeatherDTO {
 
     @JsonProperty("coord")
