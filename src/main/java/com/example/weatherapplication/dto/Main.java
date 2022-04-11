@@ -25,7 +25,6 @@ public class Main {
     @JsonProperty("pressure")
     private Long pressure;
 
-
     @JsonProperty("humidity")
     private Long humidity;
 }
