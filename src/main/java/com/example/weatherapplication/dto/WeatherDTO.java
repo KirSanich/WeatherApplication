@@ -53,22 +53,4 @@ public class WeatherDTO {
     @JsonProperty("cod")
     private Long cod;
 
-    @Override
-    public String toString() {
-        return "coord:" + this.getCoord().toString() + "\n" +
-                "weather:" + this.getWeather().toString() + "\n" +
-                "base:" + this.getBase() + "\n" +
-                "main:" + this.getMain().toString() + "\n" +
-                "visibility:" + this.getVisibility().toString() + "\n" +
-                "wind:" + this.getWind().toString() + "\n" +
-                "clouds:" + this.getClouds().toString() + "\n" +
-                "dt:" + this.getDt().toString() + "\n" +
-                "sys:" + this.getSys().toString() + "\n" +
-                "timezone:" + this.getTimezone().toString() + "\n" +
-                "id:" + this.getId().toString() + "\n" +
-                "name:" + this.getName() + "\n" +
-                "cod:" + this.getCod().toString() + "\n";
-
-
-    }
 }
