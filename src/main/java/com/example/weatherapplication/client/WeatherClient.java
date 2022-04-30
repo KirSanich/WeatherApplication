@@ -11,5 +11,4 @@ public interface WeatherClient {
 
     @GetMapping(value = "/weather?q={city_name}&appid={Api_key}")
     WeatherDTO getWeatherByCity(@PathVariable("city_name") String cityName, @PathVariable("Api_key") String ApiKey);
-
 }
