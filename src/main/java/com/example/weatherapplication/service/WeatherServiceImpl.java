@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 @Service
@@ -25,8 +29,17 @@ public class WeatherServiceImpl implements WeatherService {
             case "clear" -> "Сейчас ясное небо, можно гулять";
             case "drizzle" -> "Сейчас изморось, аккуратнее";
             case "thunderstorm" -> "Сейчас гроза, лучше переждать";
-            case "clouds" -> "Сейчас облачно";
+            case "clouds" -> "Сейчас облачно, возможно пасмурно";
             default -> "Непонятно какая сейчас погода";
         };
+    }
+
+    @Override
+    public String fromUnixToZonedDate(Long UNIX) {
+        Instant instant = Instant.ofEpochMilli(UNIX * 1000);
+        ZoneId zoneId = ZoneId.of("Europe/Moscow");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        ZonedDateTime zonedDateTime = instant.atZone(zoneId);
+        return zonedDateTime.format(dateTimeFormatter);
     }
 }

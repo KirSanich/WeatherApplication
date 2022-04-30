@@ -21,7 +21,7 @@ import java.util.function.Predicate;
 @Component
 @Getter
 @Setter
-public class WeatherBot extends TelegramLongPollingBot implements BotCommand {
+public class WeatherBot extends TelegramLongPollingBot  {
 
     @Autowired
     private final WeatherController weatherController;
@@ -32,13 +32,17 @@ public class WeatherBot extends TelegramLongPollingBot implements BotCommand {
     @Autowired
     private final BotConfiguration botConfiguration;
 
+    @Autowired
+    private final BotService botService;
+
     private BotStatus botStatus;
 
-    public WeatherBot(WeatherController weatherController, WeatherService weatherService) {
+    public WeatherBot(WeatherController weatherController, WeatherService weatherService, BotConfiguration botConfiguration, BotService botService) {
         this.weatherController = weatherController;
         this.weatherService = weatherService;
         this.botStatus = BotStatus.FREE;
-        this.botConfiguration = new BotConfiguration();
+        this.botConfiguration = botConfiguration;
+        this.botService = botService;
     }
 
     @Override
@@ -61,18 +65,14 @@ public class WeatherBot extends TelegramLongPollingBot implements BotCommand {
     @SneakyThrows
     private void handleMessage(Message message) {
 
-        Predicate<Message> botFreeAndExpressionHas = message1 -> (message.hasText() && (message.getText().startsWith("Бот, узнай погоду в городе ")) && botStatus.equals(BotStatus.FREE));
+        Predicate<BotStatus> botStatusPredicate = botStatus1 -> botStatus1 == BotStatus.DO_COMMAND;
+        Predicate<Message> messagePredicate = message1 -> message.hasText() && message.hasEntities();
 
-        if (botFreeAndExpressionHas.test(message)) {
-            execute(SendMessage.builder()
-                    .text(createAnswer(message, BotStatus.FREE))
-                    .chatId(message.getChatId().toString())
-                    .build());
-        } else if (botStatus == BotStatus.DO_COMMAND) {
-            String answer = createAnswer(message, BotStatus.DO_COMMAND);
+        if (botStatusPredicate.test(botStatus)) {
+            String answer = botService.createAnswer(message, BotStatus.DO_COMMAND);
             execute(SendMessage.builder().text(answer).chatId(message.getChatId().toString()).build());
             botStatus = BotStatus.FREE;
-        } else if (message.hasText() && message.hasEntities()) {
+        } else if (messagePredicate.test(message)) {
             Optional<MessageEntity> commandEntity = message.getEntities().stream()
                     .filter(e -> "bot_command".equalsIgnoreCase(e.getType()))
                     .findFirst();
@@ -83,13 +83,13 @@ public class WeatherBot extends TelegramLongPollingBot implements BotCommand {
                     case "/set_weather" -> {
                         {
                             execute(SendMessage.builder()
-                                    .text("Пожалуйста введите город:").chatId(message.getChatId().toString()).build());
+                                    .text("Пожалуйста введи город для прогноза").chatId(message.getChatId().toString()).build());
                             botStatus = BotStatus.DO_COMMAND;
                         }
 
                     }
                     case "/set_welcome_israel" -> {
-                        Message message1 = execute(SendMessage.builder().text("Шалом шабат для друзей из Тель-Авива")
+                        execute(SendMessage.builder().text("Шалом шабат для друзей из Тель-Авива")
                                 .chatId(message.getChatId().toString()).build());
                     }
                 }
@@ -97,34 +97,4 @@ public class WeatherBot extends TelegramLongPollingBot implements BotCommand {
         }
     }
 
-
-    @Override
-    public String createAnswer(Message message, BotStatus botStatus) {
-      return switch (botStatus) {
-            case FREE -> {
-                String city = message.getText().substring(27);
-                WeatherDTO weatherDTO = weatherController.getWeather(city).getBody();
-                yield "-----------------" + "\n"
-                        + "\n"
-                        + "Город: " + weatherDTO.getName() + "\n"
-                        + "Температура в Цельсиях: " + weatherService.fromKelvinToCelsius(weatherDTO.getMain().getTemp()) + "\n"
-                        + "\n"
-                        + weatherService.getAdvice(weatherDTO.getWeather().get(0).getMain()) + "\n"
-                        + "\n"
-                        + "-----------------";
-            }
-            case DO_COMMAND -> {
-                String city = message.getText();
-                WeatherDTO weatherDTO = weatherController.getWeather(city).getBody();
-                yield  "-----------------" + "\n"
-                        + "\n"
-                        + "Город: " + weatherDTO.getName() + "\n"
-                        + "Температура в Цельсиях: " + weatherService.fromKelvinToCelsius(weatherDTO.getMain().getTemp()) + "\n"
-                        + "\n"
-                        + weatherService.getAdvice(weatherDTO.getWeather().get(0).getMain()) + "\n"
-                        + "\n"
-                        + "-----------------";
-            }
-        };
-    }
 }

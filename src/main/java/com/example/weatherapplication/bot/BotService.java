@@ -1,9 +1,12 @@
 package com.example.weatherapplication.bot;
 
-import com.example.weatherapplication.dto.WeatherDTO;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
-public interface BotCommand {
+import java.util.function.Predicate;
+
+public interface BotService {
+
+    boolean chooseTypeAnswer(Predicate<Message> messagePredicate);
 
     String createAnswer(Message message, BotStatus botStatus);
 }
