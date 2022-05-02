@@ -1,12 +1,11 @@
 package com.example.weatherapplication.bot;
 
-import com.example.weatherapplication.controller.WeatherController;
-import com.example.weatherapplication.dto.WeatherDTO;
-import com.example.weatherapplication.service.WeatherService;
-import lombok.AllArgsConstructor;
+import com.example.weatherapplication.weather.controller.WeatherController;
+import com.example.weatherapplication.weather.service.WeatherService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import org.checkerframework.checker.nullness.Opt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -21,7 +20,7 @@ import java.util.function.Predicate;
 @Component
 @Getter
 @Setter
-public class WeatherBot extends TelegramLongPollingBot  {
+public class WeatherBot extends TelegramLongPollingBot {
 
     @Autowired
     private final WeatherController weatherController;
@@ -31,6 +30,9 @@ public class WeatherBot extends TelegramLongPollingBot  {
 
     @Autowired
     private final BotConfiguration botConfiguration;
+
+    @Autowired
+    private final BotUtil botUtil;
 
     @Autowired
     private final BotService botService;
@@ -43,6 +45,7 @@ public class WeatherBot extends TelegramLongPollingBot  {
         this.botStatus = BotStatus.FREE;
         this.botConfiguration = botConfiguration;
         this.botService = botService;
+        this.botUtil = getBotUtil();
     }
 
     @Override
@@ -65,10 +68,16 @@ public class WeatherBot extends TelegramLongPollingBot  {
     @SneakyThrows
     private void handleMessage(Message message) {
 
-        Predicate<BotStatus> botStatusPredicate = botStatus1 -> botStatus1 == BotStatus.DO_COMMAND;
+        Predicate<BotStatus> botStatusPredicateFree = botStatus1 -> botStatus1 == BotStatus.FREE && !message.hasEntities();
+        Predicate<BotStatus> botStatusPredicateDoCommand = botStatus1 -> botStatus1 == BotStatus.DO_COMMAND;
         Predicate<Message> messagePredicate = message1 -> message.hasText() && message.hasEntities();
 
-        if (botStatusPredicate.test(botStatus)) {
+        if (botStatusPredicateFree.test(botStatus)) {
+            String answer = botService.createAnswer(message, BotStatus.FREE);
+            execute(SendMessage.builder().text(answer).chatId(message.getChatId().toString()).build());
+            botStatus = BotStatus.FREE;
+        }
+        if (botStatusPredicateDoCommand.test(botStatus)) {
             String answer = botService.createAnswer(message, BotStatus.DO_COMMAND);
             execute(SendMessage.builder().text(answer).chatId(message.getChatId().toString()).build());
             botStatus = BotStatus.FREE;
@@ -80,18 +89,15 @@ public class WeatherBot extends TelegramLongPollingBot  {
                 String command = message.getText()
                         .substring(commandEntity.get().getOffset(), commandEntity.get().getLength());
                 switch (command) {
-                    case "/set_weather" -> {
+                    case "/get_weather" -> {
                         {
                             execute(SendMessage.builder()
-                                    .text("Пожалуйста введи город для прогноза").chatId(message.getChatId().toString()).build());
+                                    .text("Пожалуйста, введи город для прогноза").chatId(message.getChatId().toString()).build());
                             botStatus = BotStatus.DO_COMMAND;
                         }
 
                     }
-                    case "/set_welcome_israel" -> {
-                        execute(SendMessage.builder().text("Шалом шабат для друзей из Тель-Авива")
-                                .chatId(message.getChatId().toString()).build());
-                    }
+
                 }
             }
         }

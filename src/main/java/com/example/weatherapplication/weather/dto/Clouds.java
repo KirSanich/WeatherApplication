@@ -1,4 +1,4 @@
-package com.example.weatherapplication.dto;
+package com.example.weatherapplication.weather.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

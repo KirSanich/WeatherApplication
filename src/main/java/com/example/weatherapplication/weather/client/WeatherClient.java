@@ -1,10 +1,12 @@
-package com.example.weatherapplication.client;
+package com.example.weatherapplication.weather.client;
 
 
-import com.example.weatherapplication.dto.WeatherDTO;
+import com.example.weatherapplication.weather.dto.WeatherDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.Optional;
 
 @FeignClient(value = "weather-api", url = "${application.weather.url}")
 public interface WeatherClient {

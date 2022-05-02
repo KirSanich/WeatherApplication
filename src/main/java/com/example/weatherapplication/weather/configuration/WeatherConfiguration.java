@@ -1,4 +1,4 @@
-package com.example.weatherapplication.configuration;
+package com.example.weatherapplication.weather.configuration;
 
 
 import lombok.Getter;
